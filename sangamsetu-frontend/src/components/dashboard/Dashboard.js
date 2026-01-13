@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Dashboard = () => {
-  const { user, hasRole, hasAnyRole, logout } = useAuth();
+  const { user, hasAnyRole, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,7 +42,7 @@ const Dashboard = () => {
 
         {/* Action Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Register Missing Person */}
+
           {hasAnyRole(['VOLUNTEER', 'POLICE', 'ADMIN']) && (
             <Link
               to="/missing-person/register"
@@ -58,7 +58,6 @@ const Dashboard = () => {
             </Link>
           )}
 
-          {/* Register Found Person */}
           {hasAnyRole(['VOLUNTEER', 'POLICE', 'ADMIN']) && (
             <Link
               to="/found-person/register"
@@ -74,7 +73,6 @@ const Dashboard = () => {
             </Link>
           )}
 
-          {/* View Matches */}
           {hasAnyRole(['POLICE', 'ADMIN']) && (
             <Link
               to="/matches"
@@ -90,57 +88,11 @@ const Dashboard = () => {
             </Link>
           )}
 
-          {/* View Missing Persons */}
-          {hasAnyRole(['POLICE', 'ADMIN']) && (
-            <Link
-              to="/missing-persons"
-              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
-            >
-              <div className="text-3xl mb-4">📋</div>
-              <h3 className="text-lg font-semibold mb-2">
-                View Missing Persons
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Browse all missing person reports
-              </p>
-            </Link>
-          )}
-
-          {/* View Found Persons */}
-          {hasAnyRole(['POLICE', 'ADMIN']) && (
-            <Link
-              to="/found-persons"
-              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
-            >
-              <div className="text-3xl mb-4">📄</div>
-              <h3 className="text-lg font-semibold mb-2">
-                View Found Persons
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Browse all found person reports
-              </p>
-            </Link>
-          )}
-
-          {/* Admin Reports */}
-          {hasRole('ADMIN') && (
-            <Link
-              to="/admin/reports"
-              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
-            >
-              <div className="text-3xl mb-4">📊</div>
-              <h3 className="text-lg font-semibold mb-2">
-                Admin Reports
-              </h3>
-              <p className="text-gray-600 text-sm">
-                View analytics and reports
-              </p>
-            </Link>
-          )}
         </div>
       </main>
     </div>
   );
 };
+
 
 export default Dashboard;
