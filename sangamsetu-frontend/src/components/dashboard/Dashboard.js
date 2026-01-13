@@ -6,27 +6,7 @@ const Dashboard = () => {
   const { user, hasAnyRole, logout } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">
-            SangamSetu Dashboard
-          </h1>
-
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">
-              {user?.first_name || user?.username} ({user?.role})
-            </span>
-            <button
-              onClick={logout}
-              className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-100">
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
@@ -93,6 +73,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
 
 export default Dashboard;
