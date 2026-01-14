@@ -20,53 +20,47 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+     {/* Action Cards */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-          {hasAnyRole(['VOLUNTEER', 'POLICE', 'ADMIN']) && (
-            <Link
-              to="/missing-person/register"
-              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
-            >
-              <div className="text-3xl mb-4">🔍</div>
-              <h3 className="text-lg font-semibold mb-2">
-                Register Missing Person
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Report a new missing person case
-              </p>
-            </Link>
-          )}
+  {hasAnyRole(['VOLUNTEER', 'POLICE', 'ADMIN']) && (
+    <Link
+      to="/missing-person/register"
+      className="group bg-white p-6 rounded-xl shadow hover:shadow-xl transition-all"
+    >
+      <div className="text-4xl mb-4 group-hover:scale-110 transition">🔍</div>
+      <h3 className="text-lg font-semibold mb-1">Register Missing Person</h3>
+      <p className="text-gray-600 text-sm">
+        Report a new missing person case
+      </p>
+    </Link>
+  )}
 
-          {hasAnyRole(['VOLUNTEER', 'POLICE', 'ADMIN']) && (
-            <Link
-              to="/found-person/register"
-              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
-            >
-              <div className="text-3xl mb-4">✅</div>
-              <h3 className="text-lg font-semibold mb-2">
-                Register Found Person
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Report a found person
-              </p>
-            </Link>
-          )}
+  {hasAnyRole(['VOLUNTEER', 'POLICE', 'ADMIN']) && (
+    <Link
+      to="/found-person/register"
+      className="group bg-white p-6 rounded-xl shadow hover:shadow-xl transition-all"
+    >
+      <div className="text-4xl mb-4 group-hover:scale-110 transition">✅</div>
+      <h3 className="text-lg font-semibold mb-1">Register Found Person</h3>
+      <p className="text-gray-600 text-sm">
+        Report a found person
+      </p>
+    </Link>
+  )}
 
-          {hasAnyRole(['POLICE', 'ADMIN']) && (
-            <Link
-              to="/matches"
-              className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition"
-            >
-              <div className="text-3xl mb-4">🔗</div>
-              <h3 className="text-lg font-semibold mb-2">
-                View Match Suggestions
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Review AI-generated matches
-              </p>
-            </Link>
-          )}
+  {hasAnyRole(['POLICE', 'ADMIN']) && (
+    <Link
+      to="/matches"
+      className="group bg-white p-6 rounded-xl shadow hover:shadow-xl transition-all"
+    >
+      <div className="text-4xl mb-4 group-hover:scale-110 transition">🔗</div>
+      <h3 className="text-lg font-semibold mb-1">Match Suggestions</h3>
+      <p className="text-gray-600 text-sm">
+        Review AI-generated matches
+      </p>
+    </Link>
+  )}
 
         </div>
       </main>
