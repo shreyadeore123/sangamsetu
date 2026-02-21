@@ -32,21 +32,6 @@ def login_view(request):
         "role": user.role,
     }, status=status.HTTP_200_OK)
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        # Add custom user data
-        data['user'] = {
-            "id": self.user.id,
-            "username": self.user.username,
-            "first_name": self.user.first_name,
-            "role": self.user.profile.role  # adjust according to your model
-        }
-        return data
-
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
-
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 

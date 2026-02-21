@@ -54,6 +54,7 @@ class MatchSuggestion(models.Model):
     )
     confidence = models.FloatField(default=0.0)
     is_confirmed = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
 

@@ -18,20 +18,21 @@ export const AuthProvider = ({ children }) => {
 
   // Load user from localStorage on mount
   useEffect(() => {
-  const token = localStorage.getItem('access_token');
-  const savedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('access_token');
+    const savedUser = localStorage.getItem('user');
 
-  if (token && savedUser) {
-    try {
-      setUser(JSON.parse(savedUser));
-      setIsAuthenticated(true);
-    } catch {
-      logout();
+    if (token && savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+        setIsAuthenticated(true);
+      } catch {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+      }
     }
-  }
-
-  setLoading(false);
-}, []);
+    setLoading(false);
+  }, []);
 
   const login = async (username, password) => {
   try {

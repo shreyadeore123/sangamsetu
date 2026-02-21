@@ -7,4 +7,4 @@ class User(AbstractUser):
         ('POLICE', 'Police'),
         ('VOLUNTEER', 'Volunteer'),
     )
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='USER')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='VOLUNTEER')

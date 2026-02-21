@@ -3,9 +3,9 @@ def calculate_confidence(missing, found):
     total = 0
 
     # Age match
-    if missing.age and found.age:
+    if missing.approx_age and found.approx_age:
         total += 1
-        if abs(missing.age - found.age) <= 2:
+        if abs(missing.approx_age - found.approx_age) <= 2:
             score += 1
 
     # Gender match

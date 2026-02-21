@@ -9,7 +9,7 @@ class IsVolunteerOrPolice(BasePermission):
         return (
             request.user
             and request.user.is_authenticated
-            and request.user.groups.filter(name="VOLUNTEER").exists()
+            and request.user.role in ("VOLUNTEER", "POLICE")
         )
     
 
@@ -29,14 +29,13 @@ class IsReporter(BasePermission):
 class IsCreatorOrAdmin(BasePermission):
     def has_object_permission(self, request, view, obj):
         # Allow if user is superuser or the one who created the match
-        return request.user.is_superuser or request.user == obj.missing_person.reported_by
+        return request.user.is_superuser or request.user == obj.missing_person.created_by
 
 
 class IsPoliceOrAdmin(BasePermission):
     def has_permission(self, request, view):
         return (
-            request.user.is_authenticated and
-            request.user.groups.filter(
-                name__in=["POLICE", "ADMIN"]
-            ).exists()
+            request.user
+            and request.user.is_authenticated
+            and request.user.role in ("POLICE", "ADMIN")
         )

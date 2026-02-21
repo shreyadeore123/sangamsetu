@@ -20,10 +20,11 @@ const MatchSuggestions = () => {
   const loadMatches = async () => {
     try {
       setLoading(true);
+      setError('');
       const params = {};
       if (filter !== 'ALL') params.status = filter;
       const data = await matchAPI.getSuggestions(params);
-      setMatches(data.results || []);
+      setMatches(Array.isArray(data) ? data : (data.results || []));
     } catch (err) {
       console.error(err);
       setError('Failed to load match suggestions');
@@ -139,9 +140,11 @@ const MatchSuggestions = () => {
                     <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
                       match.is_confirmed
                         ? 'bg-green-100 text-green-800'
+                        : match.is_rejected
+                        ? 'bg-red-100 text-red-800'
                         : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {match.is_confirmed ? 'CONFIRMED' : 'PENDING'}
+                      {match.is_confirmed ? 'CONFIRMED' : match.is_rejected ? 'REJECTED' : 'PENDING'}
                     </span>
 
                     <span className={`px-3 py-1 rounded-full text-sm font-semibold ${confidenceColor(confidence)}`}>
@@ -177,7 +180,7 @@ const MatchSuggestions = () => {
                 </div>
 
                 {/* Actions */}
-                {hasAnyRole(['POLICE', 'ADMIN']) && !match.is_confirmed && (
+                {hasAnyRole(['POLICE', 'ADMIN']) && !match.is_confirmed && !match.is_rejected && (
                   <div className="mt-6 flex justify-end gap-4">
                     <button
                       onClick={() => handleRejectMatch(match.id)}

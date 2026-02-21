@@ -164,18 +164,16 @@ export const matchAPI = {
   },
 };
 
-// ==================== Statistics APIs (Admin only) ====================
+// ==================== Statistics APIs ====================
 
 export const statsAPI = {
-  // Get dashboard statistics
   getDashboardStats: async () => {
-    const response = await apiClient.get('/stats/dashboard/');
+    const response = await apiClient.get('/cases/dashboard/');
     return response.data;
   },
 
-  // Get reports
   getReports: async (params = {}) => {
-    const response = await apiClient.get('/stats/reports/', { params });
+    const response = await apiClient.get('/cases/dashboard-stats/', { params });
     return response.data;
   },
 };

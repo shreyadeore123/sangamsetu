@@ -9,18 +9,13 @@ const FoundPersonForm = () => {
   const [success, setSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
-    approximate_age: '',
+    name: '',
+    approx_age: '',
     gender: '',
     found_location: '',
-    found_date: '',
-    physical_description: '',
-    clothing_description: '',
-    distinctive_features: '',
-    mental_state: '',
-    finder_name: '',
-    finder_phone: '',
-    finder_email: '',
     current_location: '',
+    finder_contact: '',
+    description: '',
   });
 
   const handleChange = (e) => {
@@ -38,23 +33,26 @@ const FoundPersonForm = () => {
     setLoading(true);
 
     try {
-      await foundPersonAPI.create(formData);
+      const payload = {
+        name: formData.name.trim(),
+        approx_age: formData.approx_age ? parseInt(formData.approx_age, 10) : null,
+        gender: formData.gender,
+        found_location: formData.found_location.trim(),
+        current_location: formData.current_location.trim() || null,
+        finder_contact: formData.finder_contact.trim() || null,
+        description: formData.description.trim() || '',
+      };
+      await foundPersonAPI.create(payload);
       setSuccess(true);
-      
-      // Reset form
+
       setFormData({
-        approximate_age: '',
+        name: '',
+        approx_age: '',
         gender: '',
         found_location: '',
-        found_date: '',
-        physical_description: '',
-        clothing_description: '',
-        distinctive_features: '',
-        mental_state: '',
-        finder_name: '',
-        finder_phone: '',
-        finder_email: '',
         current_location: '',
+        finder_contact: '',
+        description: '',
       });
 
       // Redirect after 2 seconds
@@ -104,27 +102,38 @@ const FoundPersonForm = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
-          {/* Basic Information */}
           <div>
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Basic Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Approximate Age <span className="text-red-500">*</span>
+                  Name of Found Person <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Full name or Unknown"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Approximate Age
                 </label>
                 <input
                   type="number"
-                  name="approximate_age"
-                  value={formData.approximate_age}
+                  name="approx_age"
+                  value={formData.approx_age}
                   onChange={handleChange}
-                  required
                   min="0"
                   max="150"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Estimated age"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Gender <span className="text-red-500">*</span>
@@ -142,45 +151,11 @@ const FoundPersonForm = () => {
                   <option value="OTHER">Other</option>
                 </select>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Found Date <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  name="found_date"
-                  value={formData.found_date}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Mental State
-                </label>
-                <select
-                  name="mental_state"
-                  value={formData.mental_state}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Select state</option>
-                  <option value="ALERT">Alert/Normal</option>
-                  <option value="CONFUSED">Confused</option>
-                  <option value="DISTRESSED">Distressed</option>
-                  <option value="UNCONSCIOUS">Unconscious</option>
-                  <option value="INJURED">Injured</option>
-                </select>
-              </div>
             </div>
           </div>
 
-          {/* Location Information */}
           <div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Location Information</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Location</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -196,117 +171,49 @@ const FoundPersonForm = () => {
                   placeholder="e.g., Near Railway Station, Gate 3"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Current Location <span className="text-red-500">*</span>
+                  Current Location
                 </label>
                 <input
                   type="text"
                   name="current_location"
                   value={formData.current_location}
                   onChange={handleChange}
-                  required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Where the person is being kept (e.g., Police Station, Medical Center)"
+                  placeholder="e.g., Police Station, Medical Center"
                 />
               </div>
             </div>
           </div>
 
-          {/* Physical Description */}
           <div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Physical Description</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Description & Contact</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Physical Description
+                  Description
                 </label>
                 <textarea
-                  name="physical_description"
-                  value={formData.physical_description}
+                  name="description"
+                  value={formData.description}
                   onChange={handleChange}
                   rows="3"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Height, build, hair color, complexion, etc."
+                  placeholder="Physical appearance, clothing, distinctive features"
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Clothing Description
+                  Finder Contact (phone or email)
                 </label>
                 <input
                   type="text"
-                  name="clothing_description"
-                  value={formData.clothing_description}
+                  name="finder_contact"
+                  value={formData.finder_contact}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="What the person is wearing"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Distinctive Features
-                </label>
-                <textarea
-                  name="distinctive_features"
-                  value={formData.distinctive_features}
-                  onChange={handleChange}
-                  rows="2"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Scars, tattoos, birthmarks, jewelry, etc."
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Finder Information */}
-          <div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Finder Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Finder Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="finder_name"
-                  value={formData.finder_name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Your name"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Finder Phone <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  name="finder_phone"
-                  value={formData.finder_phone}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Phone number"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Finder Email
-                </label>
-                <input
-                  type="email"
-                  name="finder_email"
-                  value={formData.finder_email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Email address (optional)"
+                  placeholder="Phone number or email"
                 />
               </div>
             </div>

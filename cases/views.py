@@ -1,25 +1,17 @@
-from re import Match
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
-from .models import Case
+from rest_framework.decorators import api_view, permission_classes
 from .models import MissingPerson, FoundPerson, MatchSuggestion
 from .serializers import (
     MissingPersonSerializer,
     FoundPersonSerializer,
     MatchSuggestionSerializer,
 )
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from .models import MissingPerson, FoundPerson
-
 from .permissions import IsAdminRole, IsVolunteerOrPolice, IsPoliceOrAdmin
 from .utils import calculate_confidence
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 
 class MissingPersonCreateView(generics.CreateAPIView):
@@ -34,9 +26,9 @@ class FoundPersonCreateView(generics.CreateAPIView):
     permission_classes = [IsVolunteerOrPolice]
 
     def perform_create(self, serializer):
-        found = serializer.save(reported_by=self.request.user)
+        found = serializer.save(created_by=self.request.user)
 
-        missing_cases = MissingPerson.objects.filter(is_found=False)
+        missing_cases = MissingPerson.objects.all()
 
         for missing in missing_cases:
             confidence = calculate_confidence(missing, found)
@@ -59,21 +51,23 @@ class MatchListView(generics.ListAPIView):
 
         min_conf = self.request.query_params.get("min_confidence")
         confirmed = self.request.query_params.get("confirmed")
+        status_filter = self.request.query_params.get("status")
 
         if min_conf:
-            queryset = queryset.filter(confidence__gte=min_conf)
-
+            queryset = queryset.filter(confidence__gte=float(min_conf))
         if confirmed is not None:
-            queryset = queryset.filter(
-                is_confirmed=confirmed.lower() == "true"
-            )
+            queryset = queryset.filter(is_confirmed=confirmed.lower() == "true")
+        if status_filter:
+            s = status_filter.upper()
+            if s == "CONFIRMED":
+                queryset = queryset.filter(is_confirmed=True)
+            elif s == "REJECTED":
+                queryset = queryset.filter(is_rejected=True)
+            elif s == "PENDING":
+                queryset = queryset.filter(is_confirmed=False, is_rejected=False)
 
         return queryset
 
-class FoundCaseView(APIView):
-    def post(self, request):
-        # your logic here
-        return Response({"message": "Case found!"}, status=status.HTTP_200_OK)
 
 
 
@@ -90,10 +84,29 @@ class ConfirmMatchView(APIView):
             )
 
         match.is_confirmed = True
+        match.is_rejected = False
         match.save()
 
         return Response(
             {"detail": "Match confirmed"},
+            status=status.HTTP_200_OK
+        )
+
+
+class RejectMatchView(APIView):
+    permission_classes = [IsPoliceOrAdmin]
+
+    def post(self, request, pk):
+        match = get_object_or_404(MatchSuggestion, pk=pk)
+        if match.is_confirmed:
+            return Response(
+                {"detail": "Cannot reject a confirmed match"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        match.is_rejected = True
+        match.save()
+        return Response(
+            {"detail": "Match rejected"},
             status=status.HTTP_200_OK
         )
 
@@ -102,10 +115,12 @@ class DashboardStatsView(APIView):
 
     def get(self, request):
         return Response({
-            "total_cases": 10,
-            "lost_cases": 9,
-            "found_cases": 7
+            "missing_count": MissingPerson.objects.count(),
+            "found_count": FoundPerson.objects.count(),
+            "match_count": MatchSuggestion.objects.count(),
+            "total_cases": MatchSuggestion.objects.filter(is_confirmed=True).count(),
         })
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

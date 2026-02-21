@@ -41,21 +41,16 @@ const MissingPersonForm = () => {
   setLoading(true);
 
   try {
-    // ✅ Format last_seen_date before sending
     const payload = {
-  name: formData.name,
-  approx_age: formData.age, // ✅ FIX
-  gender: formData.gender.toLowerCase(), // ✅ FIX
-  last_seen_location: formData.last_seen_location,
-  last_seen_date: formatDateForBackend(formData.last_seen_date),
-  description: formData.description,
-  clothing: formData.clothing,
-  identifying_marks: formData.identifying_marks,
-  contact_name: formData.contact_name,
-  contact_phone: formData.contact_phone,
-  contact_email: formData.contact_email,
-};
-
+      name: formData.name.trim(),
+      approx_age: formData.age ? parseInt(formData.age, 10) : null,
+      gender: (formData.gender || '').toUpperCase(),
+      last_seen_location: formData.last_seen_location.trim(),
+      last_seen_date: formatDateForBackend(formData.last_seen_date),
+      description: [formData.description, formData.clothing, formData.identifying_marks]
+        .filter(Boolean)
+        .join(' | ') || '',
+    };
     await missingPersonAPI.create(payload);
     setSuccess(true);
 
